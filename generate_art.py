@@ -2,26 +2,30 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 
-# Map Huruf FERDIYANTO pada Grid (7 Baris x 52 Kolom)
+# Map Huruf FERDIYANTO dengan Gradasi:
+# 2 = Hijau Tua Pekat (15 commit)
+# 1 = Hijau Cerah/Muda (3 commit)
+# 0 = Kosong/Abu-abu (0 commit)
+
 LETTERS = {
-    'F': [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]],
-    'E': [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]],
-    'R': [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1],[1,0,0,1]],
-    'D': [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
-    'I': [[1,1,1,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[1,1,1,1]],
-    'Y': [[1,0,0,1],[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0]],
-    'A': [[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,0,0,1]],
-    'N': [[1,0,0,1],[1,1,0,1],[1,1,0,1],[1,0,1,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
-    'T': [[1,1,1,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0]],
-    'O': [[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]]
+    'F': [[1,2,2,1],[2,0,0,0],[2,2,1,0],[2,0,0,0],[2,0,0,0],[2,0,0,0],[2,0,0,0]],
+    'E': [[1,2,2,1],[2,0,0,0],[2,2,1,0],[2,0,0,0],[2,0,0,0],[2,0,0,0],[1,2,2,1]],
+    'R': [[2,2,2,1],[2,0,0,2],[2,0,0,2],[2,2,2,1],[2,0,1,0],[2,0,0,2],[2,0,0,2]],
+    'D': [[2,2,2,1],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,2,2,1]],
+    'I': [[1,2,2,1],[0,2,2,0],[0,2,2,0],[0,1,2,0],[0,2,2,0],[0,2,2,0],[1,2,2,1]],
+    'Y': [[2,0,0,2],[2,0,0,2],[1,2,2,1],[0,1,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0]],
+    'A': [[1,2,2,1],[2,0,0,2],[2,0,0,2],[2,2,2,2],[2,0,0,2],[2,0,0,2],[2,0,0,2]],
+    'N': [[2,0,0,2],[2,1,0,2],[2,2,0,2],[2,0,2,2],[2,0,1,2],[2,0,0,2],[2,0,0,2]],
+    'T': [[1,2,2,1],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0]],
+    'O': [[1,2,2,1],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[1,2,2,1]]
 }
 
 WORD = "FERDIYANTO"
-START_YEAR = 2027
+START_YEAR = 2025 # Target Tahun 2025
 
 def get_start_date(year):
     d = datetime(year, 1, 1)
-    while d.weekday() != 6: # 6 = Minggu
+    while d.weekday() != 6:
         d += timedelta(days=1)
     return d
 
@@ -61,18 +65,21 @@ def run():
     start_date = get_start_date(START_YEAR)
     grid = generate_grid()
     
-    print(f"Memproses pembuatan commit untuk nama {WORD} ({START_YEAR})... Harap tunggu.")
+    print(f"Memproses pembuatan commit gradasi untuk nama {WORD} ({START_YEAR})... Harap tunggu.")
     
     total_dots = 0
     for col in range(52):
         for row in range(7):
-            if grid[row][col] == 1:
+            val = grid[row][col]
+            if val > 0:
                 current_date = start_date + timedelta(days=(col * 7 + row))
                 date_str = current_date.strftime("%Y-%m-%d")
-                make_commit(date_str, 20)
+                
+                num_commits = 15 if val == 2 else 3
+                make_commit(date_str, num_commits)
                 total_dots += 1
                 
-    print(f"Selesai! Berhasil membuat commit pada {total_dots} titik piksel.")
+    print(f"Selesai! Berhasil membuat commit gradasi pada {total_dots} titik piksel.")
 
 if __name__ == "__main__":
     run()

@@ -1,29 +1,26 @@
 import os
 import subprocess
+import random
 from datetime import datetime, timedelta
 
-# Map Huruf FERDIYANTO pada Grid (7 Baris x 52 Kolom)
+# Map Huruf FERDIYANTO (Tegak & Presisi) untuk Tahun 2025:
+# 2 = 3 commit (Hijau Muda Sedikit Pekat)
+# 1 = 1 commit (Hijau Paling Cerah)
+# 0 = Kosong
 LETTERS = {
-    'F': [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0]],
-    'E': [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]],
-    'R': [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1],[1,0,0,1]],
-    'D': [[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
-    'I': [[1,1,1,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[1,1,1,1]],
-    'Y': [[1,0,0,1],[1,0,0,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0]],
-    'A': [[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,0,0,1]],
-    'N': [[1,0,0,1],[1,1,0,1],[1,1,0,1],[1,0,1,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
-    'T': [[1,1,1,1],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0],[0,1,1,0]],
-    'O': [[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]]
+    'F': [[1,2,2,1],[2,0,0,0],[2,2,1,0],[2,0,0,0],[2,0,0,0],[2,0,0,0],[2,0,0,0]],
+    'E': [[1,2,2,1],[2,0,0,0],[2,2,1,0],[2,0,0,0],[2,0,0,0],[2,0,0,0],[1,2,2,1]],
+    'R': [[2,2,2,1],[2,0,0,2],[2,0,0,2],[2,2,2,1],[2,0,1,0],[2,0,0,2],[2,0,0,2]],
+    'D': [[2,2,2,0],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,2,2,0]],
+    'I': [[1,2,2,1],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[1,2,2,1]],
+    'Y': [[2,0,0,2],[2,0,0,2],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0]],
+    'A': [[0,2,2,0],[2,0,0,2],[2,0,0,2],[2,2,2,2],[2,0,0,2],[2,0,0,2],[2,0,0,2]],
+    'N': [[2,0,0,2],[2,2,0,2],[2,1,0,2],[2,0,1,2],[2,0,2,2],[2,0,0,2],[2,0,0,2]],
+    'T': [[1,2,2,1],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0],[0,2,2,0]],
+    'O': [[0,2,2,0],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[2,0,0,2],[0,2,2,0]]
 }
 
 WORD = "FERDIYANTO"
-START_YEAR = 2027
-
-def get_start_date(year):
-    d = datetime(year, 1, 1)
-    while d.weekday() != 6: # 6 = Minggu
-        d += timedelta(days=1)
-    return d
 
 def make_commit(date_str, num_commits):
     with open("art_data.txt", "a") as f:
@@ -36,16 +33,15 @@ def make_commit(date_str, num_commits):
         env["GIT_AUTHOR_DATE"] = f"{date_str}T12:00:00"
         env["GIT_COMMITTER_DATE"] = f"{date_str}T12:00:00"
         subprocess.run(
-            ["git", "commit", "-m", "feat: pixel art commit", "--quiet"],
+            ["git", "commit", "-m", "feat: contribution activity update", "--quiet"],
             env=env,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
 
-def generate_grid():
+def generate_grid_2025():
     grid = [[0 for _ in range(52)] for _ in range(7)]
     col_index = 1
-    
     for char in WORD:
         if char in LETTERS:
             pattern = LETTERS[char]
@@ -54,25 +50,37 @@ def generate_grid():
                     if col_index + c < 52:
                         grid[r][col_index + c] = pattern[r][c]
             col_index += len(pattern[0]) + 1
-            
     return grid
 
 def run():
-    start_date = get_start_date(START_YEAR)
-    grid = generate_grid()
+    # 1. TAHUN 2025: Nama FERDIYANTO (Hijau Cerah & Pekat, Garis Bawah Tetap Hijau Muda)
+    start_date_2025 = datetime(2025, 1, 5)
+    grid_2025 = generate_grid_2025()
     
-    print(f"Memproses pembuatan commit untuk nama {WORD} ({START_YEAR})... Harap tunggu.")
-    
-    total_dots = 0
+    print("1. Memproses gambar nama FERDIYANTO untuk tahun 2025...")
     for col in range(52):
         for row in range(7):
-            if grid[row][col] == 1:
-                current_date = start_date + timedelta(days=(col * 7 + row))
+            val = grid_2025[row][col]
+            if val > 0:
+                current_date = start_date_2025 + timedelta(days=(col * 7 + row))
                 date_str = current_date.strftime("%Y-%m-%d")
-                make_commit(date_str, 20)
-                total_dots += 1
-                
-    print(f"Selesai! Berhasil membuat commit pada {total_dots} titik piksel.")
+                num_commits = 3 if val == 2 else 1  # Dikunci maks 3 commit
+                make_commit(date_str, num_commits)
+
+    # 2. TAHUN 2026: Commit Acak & Ramai dari Januari sampai November 2026
+    print("2. Memproses commit acak & ramai untuk tahun 2026 (Januari - November)...")
+    start_date_2026 = datetime(2026, 1, 1)
+    end_date_2026 = datetime(2026, 11, 9)
+    
+    current_d = start_date_2026
+    while current_d <= end_date_2026:
+        if random.random() < 0.7:  # 70% hari aktif
+            commits_today = random.randint(1, 3)
+            date_str = current_d.strftime("%Y-%m-%d")
+            make_commit(date_str, commits_today)
+        current_d += timedelta(days=1)
+
+    print("Selesai! Berhasil memproses grafik 2025 dan 2026.")
 
 if __name__ == "__main__":
     run()
